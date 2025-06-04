@@ -1,5 +1,8 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
+import { CurrentUser } from 'src/auth/current-user.decorator';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guards';
+import { TokenPayload } from 'src/prisma/token-payload.interface';
 import { CreateUserRequest } from 'src/users/dto/create-user.requets';
 import { UsersService } from 'src/users/users.service';
 
@@ -10,6 +13,12 @@ export class UsersController {
     @Post()
     @UseInterceptors(NoFilesInterceptor())
     createUser(@Body() request: CreateUserRequest) {
-        return this.usersService.createUser(request)
+        return this.usersService.createUser(request);
+    }
+
+    @Get('me')
+    @UseGuards(JwtGuard)
+    getMe(@CurrentUser() user: TokenPayload){
+        return 
     }
 }
