@@ -1,13 +1,14 @@
 "use server";
 
-import { FormError } from "@/app/common/form-errorr.interface";
-import API_URL from "@/app/constants/api";
-import { getErrorMessage } from "@/app/utils/errors";
+import { AUTHENTICATION_COOKIE } from "@/app/auth/auth-cookie";
+import API_URL from "@/app/common/constants/api";
+import { FormResponse } from "@/app/common/interfaces/form-response.interface";
+import { getErrorMessage } from "@/app/common/utils/errors";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function login(_prevState: FormError, formData: FormData) {
+export default async function login(_prevState: FormResponse, formData: FormData) {
     const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {"Content-Type": "application/json" },
@@ -17,15 +18,15 @@ export default async function login(_prevState: FormError, formData: FormData) {
     if(!res.ok) {
         return {error: getErrorMessage(parsedRes)}
     }
-    // setAuthCookie(res);
+   
     const setCookieHeader = res.headers.get("Set-Cookie");
     if (setCookieHeader) {
         const token = setCookieHeader.split(';')[0].split('=')[1];
         
-        // Thiết lập cookie trong Server Action
+        
         const cookieStore = await cookies();
         cookieStore.set({
-            name: "Authentication",
+            name: AUTHENTICATION_COOKIE,
             value: token,
             secure: true,
             httpOnly: true,
@@ -35,17 +36,3 @@ export default async function login(_prevState: FormError, formData: FormData) {
     
     redirect("/");
  }
-
-//  const setAuthCookie = async (response: Response) => {
-//     const setCookieHeader = response.headers.get("Set-Cookie");
-//     if (setCookieHeader){
-//         const token = setCookieHeader.split(';')[0].split('=')[1];
-//         (await cookies()).set({
-//             name: "Authentication",
-//             value: token,
-//             secure: true,
-//             httpOnly: true,
-//             expires: new Date(jwtDecode(token).exp! * 1000)
-//         });
-//     }
-//  }

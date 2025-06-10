@@ -1,5 +1,5 @@
-import API_URL from "@/app/constants/api";
-import { getErrorMessage } from "@/app/utils/errors";
+import API_URL from "@/app/common/constants/api";
+import { getErrorMessage } from "@/app/common/utils/errors";
 import { cookies } from "next/headers";
 
 const getHeaders = async () => {
@@ -10,9 +10,13 @@ const getHeaders = async () => {
   }
 
 export const post = async (path: string, formData: FormData) => {
+    const headers = await getHeaders();
     const res = await fetch(`${API_URL}/${path}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            ...headers,
+            "Content-Type": "application/json" },
+            credentials: 'include',
         body: JSON.stringify(Object.fromEntries(formData)),
     })
     const parsedRes = await res.json();
