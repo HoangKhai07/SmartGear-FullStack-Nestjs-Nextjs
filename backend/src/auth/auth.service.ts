@@ -4,8 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
-import ms from 'ms';
-import { TokenPayload } from 'src/prisma/token-payload.interface';
+import { TokenPayload } from 'src/auth/token-payload.interface';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()   
